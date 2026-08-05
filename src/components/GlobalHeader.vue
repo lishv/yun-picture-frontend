@@ -17,15 +17,33 @@
           @click="doMenuClick"
         />
       </a-col>
-      <a-col flex="120px">
+      <a-col flex="200px">
         <div class="user-login-status">
           <div v-if="loginUserStore.loginUser.id">
-            {{ loginUserStore.loginUser.userName??'无名'}}
+            <a-dropdown>
+              <a-space>
+                <a-avatar
+                  v-if="loginUserStore.loginUser.userAvatar"
+                  :src="loginUserStore.loginUser.userAvatar"
+                />
+                <a-avatar v-else>{{
+                  (loginUserStore.loginUser.userName ?? '无名').slice(0, 2)
+                }}</a-avatar>
+                {{ displayUserName }}
+              </a-space>
+              <template #overlay>
+                <a-menu>
+                  <a-menu-item @click="doLogout">
+                    <LogoutOutlined />
+                    退出登录
+                  </a-menu-item>
+                </a-menu>
+              </template>
+            </a-dropdown>
           </div>
           <div v-else>
             <a-button type="primary" href="/user/login">登录</a-button>
           </div>
-<!--          <a-button type="primary" href="/user/login">登录</a-button>-->
         </div>
       </a-col>
     </a-row>
@@ -33,19 +51,31 @@
 </template>
 
 <script lang="ts" setup>
-import { h, ref } from 'vue'
-import { HomeOutlined } from '@ant-design/icons-vue'
-import type { MenuProps } from 'ant-design-vue'
+import { h, ref, computed } from 'vue'
+import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
+import { type MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
+import { userLogOutUsingPost } from '@/api/userController.ts'
+
+const displayUserName = computed(() => {
+  const name = loginUserStore.loginUser.userName ?? '无名'
+  return name.length > 15 ? name.slice(0, 15) + '...' : name
+})
 
 const loginUserStore = useLoginUserStore() //重命名useLoginUserStore为loginUserStore
+console.log(loginUserStore.loginUser)
 const items = ref<MenuProps['items']>([
   {
     key: '/',
     icon: () => h(HomeOutlined),
     label: '主页',
     title: '主页',
+  },
+  {
+    key: '/admin/userManage',
+    label: '用户管理',
+    title: '用户管理',
   },
   {
     key: '/about',
@@ -68,6 +98,19 @@ const current = ref<string[]>([])
 router.afterEach((to, from, next) => {
   current.value = [to.path]
 })
+//用户注销
+const doLogout = async () => {
+  const res = await userLogOutUsingPost()
+  if (res.data.code === 0) {
+    loginUserStore.setLoginUser({
+      userName: '未登录',
+    })
+    message.success('退出登录成功')
+    router.push({ path: '/user/login' })
+  } else {
+    message.error('退出登录失败' + res.data.message)
+  }
+}
 </script>
 
 <style scoped>
