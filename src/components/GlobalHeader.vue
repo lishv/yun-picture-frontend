@@ -65,7 +65,8 @@ const displayUserName = computed(() => {
 
 const loginUserStore = useLoginUserStore() //重命名useLoginUserStore为loginUserStore
 console.log(loginUserStore.loginUser)
-const items = ref<MenuProps['items']>([
+//未经过滤的原始菜单
+const orginItems = ref<MenuProps['items']>([
   {
     key: '/',
     icon: () => h(HomeOutlined),
@@ -88,6 +89,21 @@ const items = ref<MenuProps['items']>([
     title: '其他',
   },
 ])
+//过滤后的 展示在路由菜单的数组
+const items=computed(() => filterMenus(orginItems.value))
+//过滤菜单项,根据用户角色显示不同的菜单
+const  filterMenus=(menus=[]as MenuProps['items'])=>{
+  return menus?.filter(((menu)=>{
+    //管理员才能看到/admin开头的菜单
+    if(menu?.key?.startsWith("/admin")){
+      const loginUser = loginUserStore.loginUser
+      if(!loginUser||loginUser.userRole!=="admin")
+        return false
+    }
+    return true
+  }))
+
+}
 const router = useRouter()
 
 //路由跳转事件
