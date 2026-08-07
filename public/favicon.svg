@@ -1,11 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="cloud-gallery-favicon-title">
-  <title id="cloud-gallery-favicon-title">智能协同云图库</title>
-  <defs>
-    <linearGradient id="cloud-gallery-favicon-violet-gradient" x1="3" y1="3" x2="29" y2="29" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#397BFF" />
-      <stop offset="1" stop-color="#7C4DFF" />
-    </linearGradient>
-  </defs>
-  <rect x="1" y="1" width="30" height="30" rx="7" fill="url(#cloud-gallery-favicon-violet-gradient)" />
-  <path data-part="cloud-picture-symbol" fill="#FFFFFF" fill-rule="evenodd" d="M9.25 23.5A6.25 6.25 0 0 1 8.3 11.08 8.25 8.25 0 0 1 23.98 13.6a5.1 5.1 0 0 1-1.08 9.9H9.25Zm2.05-3.1h10.1l-3.15-4-2.18 2.45-1.72-1.75-3.05 3.3Z" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-labelledby="hualing-favicon-title">
+  <title id="hualing-favicon-title">绘灵云几何绘字标志</title>
+  <path data-part="silk-ribbon" d="m4 8.5 4.5-4 3 3-5 4.5H3Z" fill="#34B6A8" />
+  <path data-part="silk-ribbon" d="m4.5 14.5 5-4 3 3-5.5 4.5H3.5Z" fill="#34B6A8" />
+  <path data-part="silk-ribbon" d="m4 21 6.5-4.5 3.5 3-7.5 5.5H3Z" fill="#34B6A8" />
+  <path data-part="meeting-roof" d="m14.5 10 6.5-6 7 6h-4.5L21 7.5 18.5 10Z" fill="#123B5D" />
+  <path data-part="picture-plane" d="M13.5 11h15l-1.5 3.5H15Z" fill="#123B5D" />
+  <path data-part="picture-plane" d="M12.5 16h15.5l-1.5 3.5H14Z" fill="#123B5D" />
+  <path data-part="convergence" d="m15 21 4.5 1.5 2.5-2 6.5 7h-4.5l-2.5-3-3 3H12.5Z" fill="#123B5D" />
 </svg>

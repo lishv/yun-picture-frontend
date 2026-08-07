@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="hualing-cloud-mono-title">
+  <title id="hualing-cloud-mono-title">绘灵云几何绘字单色标志</title>
+  <path data-part="silk-ribbon" d="M8 17 17 9l6 6-10 9H6Z" fill="currentColor" />
+  <path data-part="silk-ribbon" d="m9 29 10-8 6 6-11 9H7Z" fill="currentColor" />
+  <path data-part="silk-ribbon" d="m8 42 13-9 7 6-15 11H6Z" fill="currentColor" />
+  <path data-part="meeting-roof" d="m29 20 13-12 14 12h-9l-5-5-5 5Z" fill="currentColor" />
+  <path data-part="picture-plane" d="M27 22h30l-3 7H30Z" fill="currentColor" />
+  <path data-part="picture-plane" d="M25 32h31l-3 7H28Z" fill="currentColor" />
+  <path data-part="convergence" d="m30 42 9 3 5-4 13 14h-9l-5-6-6 6H25Z" fill="currentColor" />
+</svg>

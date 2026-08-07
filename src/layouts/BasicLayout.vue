@@ -5,16 +5,15 @@ import GlobalHeader from '@/components/GlobalHeader.vue'
   <div id="basicLayout">
     <a-layout style="min-height: 100vh">
       <a-layout-header class="header">
-        <GlobalHeader/>
+        <GlobalHeader />
       </a-layout-header>
 
       <a-layout-content class="content">
-        <router-view/>
+        <router-view />
       </a-layout-content>
 
-
       <a-layout-footer class="footer">
-        <a href="https://github.com/lishv" target="_blank">智能云图库 by xiaoli </a>
+        <a href="https://github.com/lishv" target="_blank">绘灵云图片协作平台 by xiaoli </a>
       </a-layout-footer>
     </a-layout>
   </div>

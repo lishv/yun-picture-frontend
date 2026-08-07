@@ -1,7 +1,7 @@
 <template>
   <div id="userLoginPage">
-    <h2 class="title">智能云图库-用户登录</h2>
-    <div class="desc">企业级智能协同云图库</div>
+    <h2 class="title">绘灵云图片协作平台</h2>
+    <div class="desc">一个免费的图片协作平台,支持用户之间的图片分享和协作</div>
     <a-form :model="formState" name="basic" autocomplete="off" @finish="handleSubmit">
       <a-form-item
         label="用户账号"

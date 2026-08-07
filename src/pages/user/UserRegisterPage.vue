@@ -1,7 +1,7 @@
 <template>
   <div id="userRegisterPage">
-    <h2 class="title">智能云图库-用户注册</h2>
-    <div class="desc">企业级智能协同云图库</div>
+    <h2 class="title">绘灵云图片协作平台</h2>
+    <div class="desc">一个免费的图片协作平台,支持用户之间的图片分享和协作</div>
     <a-form :model="formState" name="basic" autocomplete="off" @finish="handleSubmit">
       <a-form-item
         label="用户账号"
@@ -58,7 +58,7 @@ const formState = reactive<API.UserRegisterRequest>({
 const loginUserStore = useLoginUserStore()
 
 const handleSubmit = async (values: any) => {
-  if(values.userPassword !== values.checkPassword){
+  if (values.userPassword !== values.checkPassword) {
     message.error('两次输入密码不一致')
   }
   //注册成功,跳转到登录页

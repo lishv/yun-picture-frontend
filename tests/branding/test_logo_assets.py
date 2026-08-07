@@ -11,19 +11,16 @@ SVG_NS = "http://www.w3.org/2000/svg"
 XLINK_NS = "http://www.w3.org/1999/xlink"
 
 ASSETS = {
-    "icon": BRANDING / "cloud-gallery-icon.svg",
-    "horizontal": BRANDING / "cloud-gallery-logo-horizontal.svg",
-    "mono": BRANDING / "cloud-gallery-icon-mono.svg",
+    "icon": BRANDING / "hualing-cloud-icon.svg",
+    "horizontal": BRANDING / "hualing-cloud-logo-horizontal.svg",
+    "mono": BRANDING / "hualing-cloud-icon-mono.svg",
+    "header": ROOT / "src" / "assets" / "logo.svg",
+    "favicon": ROOT / "public" / "favicon.svg",
 }
-FAVICON_SVG = ROOT / "public" / "favicon.svg"
 FAVICON_ICO = ROOT / "public" / "favicon.ico"
 INDEX_HTML = ROOT / "index.html"
-BRAND_COLORS = ["#397BFF", "#7C4DFF"]
-COLORED_ASSETS = {
-    "icon": ASSETS["icon"],
-    "horizontal": ASSETS["horizontal"],
-    "favicon": FAVICON_SVG,
-}
+DEEP_BLUE = "#123B5D"
+INSPIRATION_TEAL = "#34B6A8"
 
 
 def parse_svg(path: Path) -> ET.Element:
@@ -42,17 +39,15 @@ def ico_sizes(path: Path) -> list[tuple[int, int]]:
     return sizes
 
 
-class LogoAssetsTest(unittest.TestCase):
-    def test_all_expected_svg_assets_exist_and_are_valid_xml(self):
-        paths = {**ASSETS, "favicon": FAVICON_SVG}
-        for name, path in paths.items():
+class HualingLogoAssetsTest(unittest.TestCase):
+    def test_expected_svg_assets_exist_and_are_valid_xml(self):
+        for name, path in ASSETS.items():
             with self.subTest(asset=name):
                 self.assertTrue(path.is_file(), f"missing {path}")
                 self.assertEqual(parse_svg(path).tag, f"{{{SVG_NS}}}svg")
 
-    def test_each_svg_has_accessible_title(self):
-        paths = {**ASSETS, "favicon": FAVICON_SVG}
-        for name, path in paths.items():
+    def test_each_svg_is_accessible_and_self_contained(self):
+        for name, path in ASSETS.items():
             with self.subTest(asset=name):
                 root = parse_svg(path)
                 title = root.find(f"{{{SVG_NS}}}title")
@@ -60,81 +55,80 @@ class LogoAssetsTest(unittest.TestCase):
                 self.assertTrue((title.text or "").strip())
                 self.assertEqual(root.attrib.get("role"), "img")
                 self.assertEqual(root.attrib.get("aria-labelledby"), title.attrib.get("id"))
-
-    def test_assets_have_explicit_viewboxes_and_no_page_background(self):
-        expected = {
-            "icon": "0 0 64 64",
-            "horizontal": "0 0 360 88",
-            "mono": "0 0 64 64",
-            "favicon": "0 0 32 32",
-        }
-        paths = {**ASSETS, "favicon": FAVICON_SVG}
-        for name, path in paths.items():
-            with self.subTest(asset=name):
-                root = parse_svg(path)
-                self.assertEqual(root.attrib.get("viewBox"), expected[name])
-                self.assertNotIn("style", root.attrib)
-                for rect in root.findall(f".//{{{SVG_NS}}}rect"):
-                    self.assertNotEqual(rect.attrib.get("width"), "100%")
-
-    def test_svg_files_are_self_contained(self):
-        paths = {**ASSETS, "favicon": FAVICON_SVG}
-        forbidden = ("<image", "<script", "@import")
-        for name, path in paths.items():
-            with self.subTest(asset=name):
                 source = path.read_text(encoding="utf-8")
-                for token in forbidden:
+                for token in ("<image", "<script", "@import", "linearGradient", "radialGradient"):
                     self.assertNotIn(token, source)
-                root = parse_svg(path)
                 for element in root.iter():
                     for attribute in ("href", f"{{{XLINK_NS}}}href"):
                         reference = element.attrib.get(attribute)
                         if reference is not None:
-                            self.assertTrue(reference.startswith("#"), f"external reference: {reference}")
+                            self.assertTrue(reference.startswith("#"), reference)
 
-    def test_colored_assets_use_new_blue_violet_palette(self):
-        ids = set()
-        for name, path in COLORED_ASSETS.items():
+    def test_colored_marks_use_only_deep_blue_and_inspiration_teal(self):
+        for name in ("icon", "header", "favicon"):
             with self.subTest(asset=name):
-                root = parse_svg(path)
-                gradients = root.findall(f".//{{{SVG_NS}}}linearGradient")
-                self.assertEqual(len(gradients), 1)
-                gradient_id = gradients[0].attrib["id"]
-                self.assertNotIn(gradient_id, ids)
-                ids.add(gradient_id)
-                stops = gradients[0].findall(f"{{{SVG_NS}}}stop")
-                self.assertEqual([stop.attrib["stop-color"] for stop in stops], BRAND_COLORS)
+                source = ASSETS[name].read_text(encoding="utf-8")
+                colors = set(re.findall(r"#[0-9A-Fa-f]{6}", source))
+                self.assertEqual(colors, {DEEP_BLUE, INSPIRATION_TEAL})
+        horizontal = ASSETS["horizontal"].read_text(encoding="utf-8")
+        self.assertIn(DEEP_BLUE, horizontal)
+        self.assertIn(INSPIRATION_TEAL, horizontal)
+        for old_color in ("#173B67", "#2B8EBF", "#168AAD", "#397BFF", "#7C4DFF"):
+            self.assertNotIn(old_color, horizontal)
 
-    def test_favicon_svg_uses_simplified_white_symbol(self):
-        root = parse_svg(FAVICON_SVG)
-        symbol = root.find(f".//{{{SVG_NS}}}path[@data-part='cloud-picture-symbol']")
-        self.assertIsNotNone(symbol)
-        self.assertEqual(symbol.attrib.get("fill"), "#FFFFFF")
-        self.assertEqual(root.findall(f".//{{{SVG_NS}}}circle"), [])
+    def test_colored_assets_encode_geometric_hui_mark(self):
+        for name in ("icon", "horizontal", "header", "favicon"):
+            with self.subTest(asset=name):
+                root = parse_svg(ASSETS[name])
+                self.assertEqual(len(root.findall(f".//*[@data-part='silk-ribbon']")), 3)
+                self.assertEqual(len(root.findall(f".//*[@data-part='meeting-roof']")), 1)
+                self.assertEqual(len(root.findall(f".//*[@data-part='picture-plane']")), 2)
+                self.assertEqual(len(root.findall(f".//*[@data-part='convergence']")), 1)
 
-    def test_mono_asset_uses_current_color_without_brand_colors(self):
+    def test_marks_are_solid_and_have_no_background_tile(self):
+        for name in ("icon", "header", "favicon"):
+            with self.subTest(asset=name):
+                root = parse_svg(ASSETS[name])
+                self.assertEqual(root.findall(f".//{{{SVG_NS}}}rect"), [])
+                source = ASSETS[name].read_text(encoding="utf-8")
+                self.assertNotIn("stroke=", source)
+                for obsolete in ("open-canvas", "collaboration-stroke", "forming-stroke", "picture-frame"):
+                    self.assertNotIn(obsolete, source)
+
+    def test_assets_avoid_generic_or_ai_motifs(self):
+        for name, path in ASSETS.items():
+            with self.subTest(asset=name):
+                source = path.read_text(encoding="utf-8").lower()
+                for forbidden in ("spark", "star", "circuit", "robot", "magic", "mountain", "cloud-shape"):
+                    self.assertNotIn(forbidden, source)
+
+    def test_mono_asset_uses_current_color_only(self):
         source = ASSETS["mono"].read_text(encoding="utf-8")
-        root = parse_svg(ASSETS["mono"])
         self.assertIn("currentColor", source)
-        self.assertEqual(root.findall(f".//{{{SVG_NS}}}linearGradient"), [])
         self.assertNotRegex(source, re.compile(r"#[0-9a-fA-F]{3,8}"))
+        self.assertNotIn("white", source.lower())
 
-    def test_horizontal_logo_contains_approved_copy(self):
+    def test_horizontal_logo_contains_brand_hierarchy(self):
         root = parse_svg(ASSETS["horizontal"])
         copy = ["".join(node.itertext()).strip() for node in root.findall(f".//{{{SVG_NS}}}text")]
-        self.assertEqual(copy, ["智能协同云图库", "海量免费图片获取平台"])
+        self.assertEqual(copy, ["绘灵云", "图片协作平台"])
+
+    def test_favicon_uses_compact_canvas_without_text(self):
+        root = parse_svg(ASSETS["favicon"])
+        self.assertEqual(root.attrib.get("viewBox"), "0 0 32 32")
+        self.assertEqual(root.findall(f".//{{{SVG_NS}}}text"), [])
 
     def test_ico_contains_required_sizes(self):
         self.assertEqual(ico_sizes(FAVICON_ICO), [(16, 16), (32, 32), (48, 48)])
 
-    def test_index_prefers_svg_and_keeps_ico_fallback(self):
+    def test_index_uses_new_favicons_and_brand_title(self):
         source = INDEX_HTML.read_text(encoding="utf-8")
         svg_link = '<link rel="icon" type="image/svg+xml" href="/favicon.svg">'
         ico_link = '<link rel="icon" href="/favicon.ico" sizes="any">'
         self.assertIn(svg_link, source)
         self.assertIn(ico_link, source)
         self.assertLess(source.index(svg_link), source.index(ico_link))
-        self.assertIn("<title>智能协同云图库</title>", source)
+        self.assertIn("<title>绘灵云图片协作平台</title>", source)
 
 
 if __name__ == "__main__":

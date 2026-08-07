@@ -1,11 +1,11 @@
 <template>
   <div id="globalHeader">
     <a-row :wrap="false">
-      <a-col flex="200px">
+      <a-col flex="250px">
         <router-link to="/">
           <div class="title-bar">
             <img class="logo" src="../assets/logo.svg" alt="logo" />
-            <div class="title">智能云图库</div>
+            <div class="title">绘灵云图片协作平台</div>
           </div>
         </router-link>
       </a-col>

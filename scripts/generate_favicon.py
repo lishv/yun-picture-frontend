@@ -5,71 +5,42 @@ from PIL import Image, ImageDraw
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "public" / "favicon.ico"
-SCALE = 8
-CANVAS = 48 * SCALE
-BLUE = (57, 123, 255, 255)
-VIOLET = (124, 77, 255, 255)
+SCALE = 16
+CANVAS = 32 * SCALE
+DEEP_BLUE = (18, 59, 93, 255)
+INSPIRATION_TEAL = (52, 182, 168, 255)
 
 
-def interpolate(start: int, end: int, ratio: float) -> int:
-    return round(start + (end - start) * ratio)
+def polygon(draw: ImageDraw.ImageDraw, points: list[tuple[float, float]], fill) -> None:
+    draw.polygon(
+        [(round(x * SCALE), round(y * SCALE)) for x, y in points],
+        fill=fill,
+    )
 
 
 def draw_master_icon() -> Image.Image:
-    gradient = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
-    pixels = gradient.load()
-    denominator = 2 * (CANVAS - 1)
-    for y in range(CANVAS):
-        for x in range(CANVAS):
-            ratio = (x + y) / denominator
-            pixels[x, y] = tuple(
-                interpolate(BLUE[channel], VIOLET[channel], ratio) for channel in range(4)
-            )
+    image = Image.new("RGBA", (CANVAS, CANVAS), (255, 255, 255, 0))
+    draw = ImageDraw.Draw(image)
 
-    background_mask = Image.new("L", (CANVAS, CANVAS), 0)
-    mask_draw = ImageDraw.Draw(background_mask)
-    margin = SCALE
-    mask_draw.rounded_rectangle(
-        (margin, margin, CANVAS - margin - 1, CANVAS - margin - 1),
-        radius=11 * SCALE,
-        fill=255,
-    )
+    polygon(draw, [(4, 8.5), (8.5, 4.5), (11.5, 7.5), (6.5, 12), (3, 12)], INSPIRATION_TEAL)
+    polygon(draw, [(4.5, 14.5), (9.5, 10.5), (12.5, 13.5), (7, 18), (3.5, 18)], INSPIRATION_TEAL)
+    polygon(draw, [(4, 21), (10.5, 16.5), (14, 19.5), (6.5, 25), (3, 25)], INSPIRATION_TEAL)
 
-    image = Image.new("RGBA", (CANVAS, CANVAS), (0, 0, 0, 0))
-    image.alpha_composite(Image.composite(gradient, Image.new("RGBA", gradient.size), background_mask))
-
-    symbol_mask = Image.new("L", (CANVAS, CANVAS), 0)
-    symbol = ImageDraw.Draw(symbol_mask)
-    symbol.ellipse((8 * SCALE, 20 * SCALE, 28 * SCALE, 39 * SCALE), fill=255)
-    symbol.ellipse((14 * SCALE, 12 * SCALE, 38 * SCALE, 39 * SCALE), fill=255)
-    symbol.ellipse((27 * SCALE, 18 * SCALE, 43 * SCALE, 39 * SCALE), fill=255)
-    symbol.rectangle((13 * SCALE, 27 * SCALE, 39 * SCALE, 39 * SCALE), fill=255)
-    symbol.polygon(
-        [
-            (15 * SCALE, 36 * SCALE),
-            (22 * SCALE, 29 * SCALE),
-            (27 * SCALE, 34 * SCALE),
-            (31 * SCALE, 30 * SCALE),
-            (39 * SCALE, 38 * SCALE),
-            (15 * SCALE, 38 * SCALE),
-        ],
-        fill=0,
-    )
-
-    white = Image.new("RGBA", (CANVAS, CANVAS), (255, 255, 255, 255))
-    image.alpha_composite(Image.composite(white, Image.new("RGBA", white.size), symbol_mask))
+    polygon(draw, [(14.5, 10), (21, 4), (28, 10), (23.5, 10), (21, 7.5), (18.5, 10)], DEEP_BLUE)
+    polygon(draw, [(13.5, 11), (28.5, 11), (27, 14.5), (15, 14.5)], DEEP_BLUE)
+    polygon(draw, [(12.5, 16), (28, 16), (26.5, 19.5), (14, 19.5)], DEEP_BLUE)
+    polygon(draw, [(15, 21), (19.5, 22.5), (22, 20.5), (28.5, 27.5), (24, 27.5), (21.5, 24.5), (18.5, 27.5), (12.5, 27.5)], DEEP_BLUE)
     return image
 
 
 def main() -> None:
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    master = draw_master_icon()
-    master.save(
+    draw_master_icon().save(
         OUTPUT,
         format="ICO",
         sizes=[(16, 16), (32, 32), (48, 48)],
     )
-    print("generated public/favicon.ico: 16x16, 32x32, 48x48")
+    print("generated Hualing geometric mark favicon.ico: 16x16, 32x32, 48x48")
 
 
 if __name__ == "__main__":
