@@ -296,3 +296,17 @@ export async function uploadPictureByUrlUsingPost(
     ...(options || {}),
   })
 }
+/** listPictureVoByCursor POST /api/picture/list/cursor/vo */
+export async function listPictureVoByCursorUsingPost(
+  body: API.PictureCursorQueryRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseCursorPageVOPictureVO_>('/api/picture/list/cursor/vo', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
