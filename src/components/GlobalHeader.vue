@@ -56,8 +56,7 @@ import { HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue'
 import { type MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
-import { userLogOutUsingPost } from '@/api/userController.ts'
-
+import { userLogoutUsingPost } from '@/api/userController.ts'
 const displayUserName = computed(() => {
   const name = loginUserStore.loginUser.userName ?? '无名'
   return name.length > 15 ? name.slice(0, 15) + '...' : name
@@ -72,6 +71,17 @@ const orginItems = ref<MenuProps['items']>([
     icon: () => h(HomeOutlined),
     label: '主页',
     title: '主页',
+  },
+  {
+    key: '/add_picture',
+    label: '创建图片',
+    title: '创建图片',
+  },
+
+  {
+    key: '/admin/pictureManage',
+    label: '图片管理',
+    title: '图片管理',
   },
   {
     key: '/admin/userManage',
@@ -90,19 +100,17 @@ const orginItems = ref<MenuProps['items']>([
   },
 ])
 //过滤后的 展示在路由菜单的数组
-const items=computed(() => filterMenus(orginItems.value))
+const items = computed(() => filterMenus(orginItems.value))
 //过滤菜单项,根据用户角色显示不同的菜单
-const  filterMenus=(menus=[]as MenuProps['items'])=>{
-  return menus?.filter(((menu)=>{
+const filterMenus = (menus = [] as MenuProps['items']) => {
+  return menus?.filter((menu) => {
     //管理员才能看到/admin开头的菜单
-    if(menu?.key?.startsWith("/admin")){
+    if (menu?.key?.startsWith('/admin')) {
       const loginUser = loginUserStore.loginUser
-      if(!loginUser||loginUser.userRole!=="admin")
-        return false
+      if (!loginUser || loginUser.userRole !== 'admin') return false
     }
     return true
-  }))
-
+  })
 }
 const router = useRouter()
 
@@ -116,7 +124,7 @@ router.afterEach((to, from, next) => {
 })
 //用户注销
 const doLogout = async () => {
-  const res = await userLogOutUsingPost()
+  const res = await userLogoutUsingPost()
   if (res.data.code === 0) {
     loginUserStore.setLoginUser({
       userName: '未登录',
