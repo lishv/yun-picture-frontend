@@ -98,18 +98,44 @@
               v-if="record.reviewStatus !== PIC_REVIEW_STATUS_ENUM.REJECT"
               type="link"
               danger
-              @click="handleReview(record, PIC_REVIEW_STATUS_ENUM.REJECT)"
+              @click="showRejectModal(record)"
             >
               拒绝
             </a-button>
             <a-button type="link" :href="`/add_picture?id=${record.id}`" target="_blank">
               编辑
             </a-button>
-            <a-button danger @click="doDelete(record.id)">删除</a-button>
+            <a-button danger @click="showDeleteModal(record.id)">删除</a-button>
           </a-space>
         </template>
       </template>
     </a-table>
+    <!-- 删除确认模态框 -->
+    <a-modal
+      v-model:open="deleteOpen"
+      title="确认删除"
+      :confirm-loading="deleteConfirmLoading"
+      ok-text="确认删除"
+      cancel-text="取消"
+      @ok="doDelete"
+    >
+      <p>确定要删除该图片吗？此操作不可恢复。</p>
+    </a-modal>
+    <!-- 拒绝确认模态框 -->
+    <a-modal
+      v-model:open="rejectOpen"
+      title="确认拒绝"
+      :confirm-loading="rejectConfirmLoading"
+      ok-text="确认拒绝"
+      cancel-text="取消"
+      @ok="doReject"
+    >
+      <a-form layout="vertical">
+        <a-form-item label="拒绝原因">
+          <a-textarea v-model:value="rejectReason" placeholder="请输入拒绝原因" :rows="4" />
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 <script lang="ts" setup>
@@ -242,25 +268,64 @@ const doSearch = () => {
   fetchData()
 }
 
-// 删除数据
-const doDelete = async (id: string) => {
-  if (!id) {
+// 删除确认模态框
+const deleteOpen = ref<boolean>(false)
+const deleteConfirmLoading = ref<boolean>(false)
+const deleteTargetId = ref<string>('')
+
+const showDeleteModal = (id: string) => {
+  deleteTargetId.value = id
+  deleteOpen.value = true
+}
+
+const doDelete = async () => {
+  if (!deleteTargetId.value) {
     return
   }
-  const res = await deletePictureUsingPost({ id })
+  deleteConfirmLoading.value = true
+  const res = await deletePictureUsingPost({ id: deleteTargetId.value })
+  deleteConfirmLoading.value = false
   if (res.data.code === 0) {
     message.success('删除成功')
-    // 刷新数据
+    deleteOpen.value = false
     fetchData()
   } else {
     message.error('删除失败')
   }
 }
-
 // 审核图片
+// 拒绝确认模态框
+const rejectOpen = ref<boolean>(false)
+const rejectConfirmLoading = ref<boolean>(false)
+const rejectRecord = ref<API.Picture>({} as API.Picture)
+const rejectReason = ref<string>('管理员操作拒绝')
+
+const showRejectModal = (record: API.Picture) => {
+  rejectRecord.value = record
+  rejectReason.value = '管理员操作拒绝'
+  rejectOpen.value = true
+}
+
+const doReject = async () => {
+  rejectConfirmLoading.value = true
+  const res = await doPictureReviewUsingPost({
+    id: rejectRecord.value.id,
+    reviewStatus: PIC_REVIEW_STATUS_ENUM.REJECT,
+    reviewMessage: rejectReason.value || '管理员操作拒绝',
+  })
+  rejectConfirmLoading.value = false
+  if (res.data.code === 0) {
+    message.success('审核操作成功')
+    rejectOpen.value = false
+    fetchData()
+  } else {
+    message.error('审核操作失败，' + res.data.message)
+  }
+}
+
+// 审核图片（通过）
 const handleReview = async (record: API.Picture, reviewStatus: number) => {
-  const reviewMessage =
-    reviewStatus === PIC_REVIEW_STATUS_ENUM.PASS ? '管理员操作通过' : '管理员操作拒绝'
+  const reviewMessage = '管理员操作通过'
   const res = await doPictureReviewUsingPost({
     id: record.id,
     reviewStatus,
@@ -268,7 +333,6 @@ const handleReview = async (record: API.Picture, reviewStatus: number) => {
   })
   if (res.data.code === 0) {
     message.success('审核操作成功')
-    // 重新获取列表数据
     fetchData()
   } else {
     message.error('审核操作失败，' + res.data.message)

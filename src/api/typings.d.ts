@@ -412,16 +412,21 @@ declare namespace API {
   }
 
   type PictureUploadByBatchRequest = {
+    category?: string
     count?: number
     namePrefix?: string
+    offset?: number
     searchText?: string
+    tags?: string
   }
 
   type PictureUploadRequest = {
+    category?: string
     fileUrl?: string
     id?: number
     picName?: string
     spaceId?: number
+    tags?: string
   }
 
   type PictureVO = {
