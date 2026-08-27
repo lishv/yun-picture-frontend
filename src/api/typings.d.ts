@@ -695,6 +695,25 @@ declare namespace API {
     userProfile?: string
     userRole?: string
   }
+  type PictureCursorQueryRequest = {
+    category?: string
+    cursorCreateTime?: string
+    cursorId?: string
+    pageSize?: number
+    searchText?: string
+    tags?: string[]
+  }
+  type CursorPageVOPictureVO_ = {
+    hasMore?: boolean
+    nextCursorCreateTime?: string
+    nextCursorId?: string
+    records?: PictureVO[]
+  }
+  type BaseResponseCursorPageVOPictureVO_ = {
+    code?: number
+    data?: CursorPageVOPictureVO_
+    message?: string
+  }
 
   type UserRegisterRequest = {
     checkPassword?: string

@@ -65,8 +65,7 @@ const loading = ref(false)
 const hasMore = ref(true)
 
 const nextCursorCreateTime = ref<string>()
-const nextCursorId = ref<string | number>()
-
+const nextCursorId =  ref<string>()
 const searchParams = reactive<API.PictureCursorQueryRequest>({
   searchText: undefined,
   pageSize: 20,
