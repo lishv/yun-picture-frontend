@@ -1,6 +1,3 @@
-<script setup lang="ts">
-import GlobalHeader from '@/components/GlobalHeader.vue'
-</script>
 <template>
   <div id="basicLayout">
     <a-layout style="min-height: 100vh">
@@ -8,9 +5,12 @@ import GlobalHeader from '@/components/GlobalHeader.vue'
         <GlobalHeader />
       </a-layout-header>
 
-      <a-layout-content class="content">
-        <router-view />
-      </a-layout-content>
+      <a-layout>
+        <GlobalSider class="sider" />
+        <a-layout-content class="content">
+          <router-view />
+        </a-layout-content>
+      </a-layout>
 
       <a-layout-footer class="footer">
         <a href="https://github.com/lishv" target="_blank">绘灵云图片协作平台 by xiaoli </a>
@@ -18,6 +18,11 @@ import GlobalHeader from '@/components/GlobalHeader.vue'
     </a-layout>
   </div>
 </template>
+
+<script setup lang="ts">
+import GlobalHeader from '@/components/GlobalHeader.vue'
+import GlobalSider from '@/components/GlobalSider.vue'
+</script>
 
 <style scoped>
 #basicLayout .header {
@@ -45,12 +50,12 @@ import GlobalHeader from '@/components/GlobalHeader.vue'
 }
 
 #basicLayout .footer {
-  text-align: center;
   background: #efefef;
   padding: 16px;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+  text-align: center;
 }
 </style>

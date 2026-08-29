@@ -183,7 +183,6 @@ const doShare = () => {
 }
 </script>
 
-
 <style scoped>
 #pictureDetailPage {
   margin-bottom: 16px;

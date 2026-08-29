@@ -14,6 +14,7 @@
         @keydown.enter="doClickPicture(picture)"
         @keydown.space.prevent="doClickPicture(picture)"
       >
+        <!-- 图片 -->
         <img
           class="picture-image"
           :src="picture.thumbnailUrl ?? picture.url"
