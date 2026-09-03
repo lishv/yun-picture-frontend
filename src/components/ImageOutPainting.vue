@@ -6,6 +6,12 @@
     :footer="false"
     @cancel="closeModal"
   >
+    <a-alert
+      message="图片尺寸要求：不低于 512×512 像素，且不超过 4096×4096 像素"
+      type="warning"
+      show-icon
+      style="margin-bottom: 16px"
+    />
     <a-row gutter="16">
       <a-col span="12">
         <h4>原始图片</h4>
@@ -62,10 +68,10 @@ const createTask = async () => {
   }
   const res = await createPictureOutPaintingTaskUsingPost({
     pictureId: props.picture.id,
-    // 根据需要设置扩图参数
+    // 根据需要设置扩图参数,默认扩图比例为 1.5 倍,可调整
     parameters: {
-      xScale: 2,
-      yScale: 2,
+      xScale: 1.5,
+      yScale: 1.5,
     },
   })
   if (res.data.code === 0 && res.data.data) {
@@ -98,6 +104,13 @@ const startPolling = () => {
         if (taskResult.taskStatus === 'SUCCEEDED') {
           message.success('扩图任务执行成功')
           resultImageUrl.value = taskResult.outputImageUrl
+          // 清理轮询
+          clearPolling()
+        } else if (
+          taskResult?.message === 'the size of input image is too small or to large' &&
+          taskResult.taskStatus === 'FAILED'
+        ) {
+          message.error('扩图任务执行失败，图片尺寸要求：不低于 512×512 像素，且不超过 4096×4096 像素')
           // 清理轮询
           clearPolling()
         } else if (taskResult.taskStatus === 'FAILED') {

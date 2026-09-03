@@ -4,16 +4,12 @@
     <a-flex justify="space-between">
       <h2>{{ space.spaceName }}（{{ SPACE_TYPE_MAP[space.spaceType] }}）</h2>
       <a-space size="middle">
-        <a-button
-          v-if="canUploadPicture"
-          type="primary"
-          :href="`/add_picture?spaceId=${id}`"
-          target="_blank"
-        >
+        <!--        todo: v-if="canUploadPicture"-->
+        <a-button type="primary" :href="`/add_picture?spaceId=${id}`" target="_blank">
           + 创建图片
         </a-button>
+        <!--        todo:  v-if="canManageSpaceUser"-->
         <a-button
-          v-if="canManageSpaceUser"
           type="primary"
           ghost
           :icon="h(TeamOutlined)"
@@ -22,8 +18,8 @@
         >
           成员管理
         </a-button>
+        <!--        todo:  v-if="canManageSpaceUser"-->
         <a-button
-          v-if="canManageSpaceUser"
           type="primary"
           ghost
           :icon="h(BarChartOutlined)"
@@ -32,7 +28,8 @@
         >
           空间分析
         </a-button>
-        <a-button v-if="canEditPicture" :icon="h(EditOutlined)" @click="doBatchEdit"> 批量编辑</a-button>
+        <!--         todo:v-if="canEditPicture" -->
+        <a-button :icon="h(EditOutlined)" @click="doBatchEdit"> 批量编辑</a-button>
         <a-tooltip
           :title="`占用空间 ${formatSize(space.totalSize)} / ${formatSize(space.maxSize)}`"
         >

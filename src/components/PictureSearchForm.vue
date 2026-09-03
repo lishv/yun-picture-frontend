@@ -12,7 +12,7 @@
       <a-form-item name="category" label="分类">
         <a-auto-complete
           v-model:value="searchParams.category"
-          style="min-width: 180px"
+          style="min-width: 180px"-
           placeholder="请输入分类"
           :options="categoryOptions"
           allow-clear

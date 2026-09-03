@@ -99,15 +99,15 @@ const orginItems = ref<MenuProps['items']>([
     label: '空间管理',
     title: '空间管理',
   },
-  {
-    key: '/about',
-    label: '关于',
-    title: '关于',
-  },
+  // {
+  //   key: '/about',
+  //   label: '关于',
+  //   title: '关于',
+  // },
   {
     key: 'others',
-    label: h('a', { href: 'https://github.com/lishv', target: '_blank' }, '其他'),
-    title: '其他',
+    label: h('a', { href: 'https://github.com/lishv', target: '_blank' }, '关于'),
+    title: '关于',
   },
 ])
 //过滤后的 展示在路由菜单的数组

@@ -30,10 +30,16 @@
               </template>
             </a-card-meta>
             <template v-if="showOp" #actions>
+              <!--  分享按钮-->
               <ShareAltOutlined @click="(e) => doShare(picture, e)" />
+              <!--  搜索按钮-->
               <SearchOutlined @click="(e) => doSearch(picture, e)" />
-              <EditOutlined v-if="canEdit" @click="(e) => doEdit(picture, e)" />
-              <DeleteOutlined v-if="canDelete" @click="(e) => doDelete(picture, e)" />
+              <!--  编辑按钮-->
+              <!--              todo: v-if="canEdit"-->
+              <EditOutlined @click="(e) => doEdit(picture, e)" />
+              <!--  删除按钮-->
+              <!--              todo: v-if="canDelete"-->
+              <DeleteOutlined @click="(e) => doDelete(picture, e)" />
             </template>
           </a-card>
         </a-list-item>

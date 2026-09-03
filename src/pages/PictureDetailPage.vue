@@ -71,10 +71,10 @@
             <a-button :icon="h(ShareAltOutlined)" type="primary" ghost @click="doShare">
               分享
             </a-button>
-            <a-button v-if="canEdit" :icon="h(EditOutlined)" type="default" @click="doEdit">
-              编辑
-            </a-button>
-            <a-button v-if="canDelete" :icon="h(DeleteOutlined)" danger @click="doDelete">
+            <!--             todo: v-if="canEdit"-->
+            <a-button :icon="h(EditOutlined)" type="default" @click="doEdit"> 编辑 </a-button>
+            <!--             todo: v-if="canDelete"-->
+            <a-button :icon="h(DeleteOutlined)" danger @click="doDelete">
               删除
             </a-button>
           </a-space>

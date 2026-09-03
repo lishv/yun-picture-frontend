@@ -24,7 +24,7 @@
         <a-form-item name="nameRule" label="命名规则">
           <a-input
             v-model:value="formData.nameRule"
-            placeholder="请输入命名规则，输入 {序号} 可动态生成"
+            placeholder="输入 图{序号} 动态生成-> 图1,图2,图3..."
             allow-clear
           />
         </a-form-item>

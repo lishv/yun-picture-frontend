@@ -27,7 +27,7 @@
       </a-space>
     </div>
     <div style="margin-bottom: 16px" />
-    <!-- 图片操作 -->
+    <!-- 图片操作旋转剪切 -->
     <div class="image-cropper-actions">
       <a-space>
         <a-button @click="rotateLeft" :disabled="!canEdit">向左旋转</a-button>

@@ -15,13 +15,13 @@
 import { ref } from 'vue'
 
 interface Props {
-  title: string;
-  link: string;
+  title: string
+  link: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  title: "分享图片",
-  link: 'https://www.codefather.cn'
+  title: '分享图片',
+  link: 'https://github.com/lishv',
 })
 
 // 是否可见
@@ -34,7 +34,7 @@ const openModal = () => {
 
 // 关闭弹窗
 const closeModal = () => {
-  visible.value = false;
+  visible.value = false
 }
 
 // 暴露函数给父组件

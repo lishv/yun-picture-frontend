@@ -22,6 +22,7 @@ import type { UploadProps } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
 import { uploadPictureUsingPost } from '@/api/pictureController.ts'
 
+
 interface Props {
   picture?: API.PictureVO
   spaceId?: number
