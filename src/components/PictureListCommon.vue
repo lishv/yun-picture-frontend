@@ -35,11 +35,11 @@
               <!--  搜索按钮-->
               <SearchOutlined @click="(e) => doSearch(picture, e)" />
               <!--  编辑按钮-->
-              <!--              todo: v-if="canEdit"-->
-              <EditOutlined @click="(e) => doEdit(picture, e)" />
+
+              <EditOutlined v-if="canEdit" @click="(e) => doEdit(picture, e)" />
               <!--  删除按钮-->
-              <!--              todo: v-if="canDelete"-->
-              <DeleteOutlined @click="(e) => doDelete(picture, e)" />
+
+              <DeleteOutlined v-if="canDelete" @click="(e) => doDelete(picture, e)" />
             </template>
           </a-card>
         </a-list-item>
