@@ -36,6 +36,7 @@
           <a-select
             v-model:value="record.spaceRole"
             :options="SPACE_ROLE_OPTIONS"
+            :disabled="isSpaceOwner(record)"
             @change="(value) => editSpaceRole(value, record)"
           />
         </template>
@@ -44,7 +45,14 @@
         </template>
         <template v-else-if="column.key === 'action'">
           <a-space wrap>
-            <a-button type="link" danger @click="doDelete(record.id)">删除</a-button>
+            <a-button
+              type="link"
+              danger
+              :disabled="isSpaceOwner(record)"
+              @click="doDelete(record.id)"
+            >
+              删除
+            </a-button>
           </a-space>
         </template>
       </template>
@@ -106,12 +114,23 @@ const fetchData = async () => {
     message.error('获取数据失败，' + res.data.message)
   }
 }
-
 // 页面加载时获取数据，请求一次
 onMounted(() => {
   fetchData()
 })
 
+/**
+ * 判断当前成员是否为空间创建者
+ */
+const isSpaceOwner = (record: API.SpaceUserVO) => {
+  if (!record?.userId || !record?.space?.userId) {
+    return false
+  }
+  // 转换为字符串比较，防止雪花 ID 精度问题
+  return String(record.userId) === String(record.space.userId)
+}
+
+// 添加成员表单
 // 添加成员表单
 const formData = reactive<API.SpaceUserAddRequest>({})
 
@@ -136,6 +155,10 @@ const handleSubmit = async () => {
 
 // 编辑成员角色
 const editSpaceRole = async (value, record) => {
+  if (isSpaceOwner(record)) {
+    message.warning('空间创建者不能修改角色')
+    return
+  }
   const res = await editSpaceUserUsingPost({
     id: record.id,
     spaceRole: value,
