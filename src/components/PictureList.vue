@@ -9,12 +9,18 @@
         v-for="picture in dataList"
         :key="String(picture.id)"
         class="picture-card"
+        :style="getCardStyle(picture)"
         tabindex="0"
         @click="doClickPicture(picture)"
         @keydown.enter="doClickPicture(picture)"
         @keydown.space.prevent="doClickPicture(picture)"
       >
-        <!-- 图片 -->
+        <!-- 分辨率画质角标 -->
+        <div v-if="getResolutionBadge(picture)" class="resolution-badge">
+          {{ getResolutionBadge(picture) }}
+        </div>
+
+        <!-- 图片：微距平滑缩放与主色调渐现 -->
         <img
           class="picture-image"
           :src="picture.thumbnailUrl ?? picture.url"
@@ -42,6 +48,17 @@
           </div>
 
           <div v-if="showOp" class="picture-actions">
+            <a-tooltip title="免费下载原图">
+              <button
+                type="button"
+                class="action-button download-btn"
+                aria-label="下载原图"
+                @click="doDownload(picture, $event)"
+              >
+                <DownloadOutlined />
+              </button>
+            </a-tooltip>
+
             <a-tooltip title="分享">
               <button
                 type="button"
@@ -99,12 +116,14 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch, type CSSProperties } 
 import { useRouter } from 'vue-router'
 import {
   DeleteOutlined,
+  DownloadOutlined,
   EditOutlined,
   SearchOutlined,
   ShareAltOutlined,
 } from '@ant-design/icons-vue'
 import { message } from 'ant-design-vue'
 import { deletePictureUsingPost } from '@/api/pictureController.ts'
+import { downloadImage, toHexColor } from '@/utils'
 import ShareModal from '@/components/ShareModal.vue'
 
 interface Props {
@@ -119,7 +138,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   dataList: () => [],
   loading: false,
-  showOp: false,
+  showOp: true,
   canEdit: false,
   canDelete: false,
 })
@@ -132,11 +151,46 @@ let resizeAnimationFrame: number | undefined
 
 const getImageStyle = (picture: API.PictureVO): CSSProperties => {
   if (!picture.picWidth || !picture.picHeight) {
-    return {}
+    return { minHeight: '160px' }
   }
 
   return {
     aspectRatio: `${picture.picWidth} / ${picture.picHeight}`,
+  }
+}
+
+/**
+ * 获取图片分辨率等级角标（如 4K、2K、1080P）
+ */
+const getResolutionBadge = (picture: API.PictureVO): string | undefined => {
+  const width = picture.picWidth ?? 0
+  const height = picture.picHeight ?? 0
+  if (width >= 3840 || height >= 2160) {
+    return '4K'
+  }
+  if (width >= 2560 || height >= 1440) {
+    return '2K'
+  }
+  if (width >= 1920 || height >= 1080) {
+    return '1080P'
+  }
+  return undefined
+}
+
+/**
+ * 根据图片主色调生成骨架/卡片占位样式
+ */
+const getCardStyle = (picture: API.PictureVO): CSSProperties => {
+  if (!picture.picColor) {
+    return {}
+  }
+
+  try {
+    return {
+      backgroundColor: toHexColor(picture.picColor),
+    }
+  } catch {
+    return {}
   }
 }
 
@@ -249,6 +303,20 @@ const doClickPicture = (picture: API.PictureVO) => {
   })
 }
 
+/**
+ * 快捷下载原图
+ */
+const doDownload = (picture: API.PictureVO, event: MouseEvent) => {
+  event.stopPropagation()
+
+  if (!picture.url) {
+    message.warning('图片下载链接不存在')
+    return
+  }
+
+  downloadImage(picture.url, picture.name)
+}
+
 const doSearch = (picture: API.PictureVO, event: MouseEvent) => {
   event.stopPropagation()
 
@@ -348,13 +416,44 @@ const doShare = (picture: API.PictureVO, event: MouseEvent) => {
   margin: 0;
   overflow: hidden;
   cursor: pointer;
-  background: #f5f5f5;
+  background: #1c1c20;
+  border: 1px solid #282830;
   border-radius: 6px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.picture-card:hover {
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px);
 }
 
 .picture-card:focus-visible {
   outline: 2px solid #1677ff;
   outline-offset: 2px;
+}
+
+/* 分辨率高清画质角标（如 4K、2K、1080P） */
+.resolution-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 3;
+  padding: 2px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.6px;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(18, 20, 28, 0.68);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 4px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 0.2s ease;
 }
 
 .picture-image {
@@ -447,20 +546,35 @@ const doShare = (picture: API.PictureVO, event: MouseEvent) => {
   justify-content: center;
   padding: 0;
   color: #fff;
-  background: rgba(0, 0, 0, 0.48);
-  border: 0;
-  border-radius: 4px;
+  background: rgba(20, 20, 24, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 6px;
   cursor: pointer;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .action-button:hover,
 .action-button:focus-visible {
-  background: rgba(0, 0, 0, 0.72);
+  background: rgba(22, 119, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 8px rgba(22, 119, 255, 0.5);
+  transform: translateY(-1px);
+}
+
+.action-button.download-btn:hover,
+.action-button.download-btn:focus-visible {
+  background: rgba(16, 185, 129, 0.85);
+  border-color: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.55);
 }
 
 .action-button.danger:hover,
 .action-button.danger:focus-visible {
   background: #ff4d4f;
+  border-color: #ffa39e;
+  box-shadow: 0 0 8px rgba(255, 77, 79, 0.5);
 }
 
 @media (max-width: 1600px) {

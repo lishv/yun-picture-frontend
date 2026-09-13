@@ -39,6 +39,15 @@
                       我的空间
                     </router-link>
                   </a-menu-item>
+                  <a-menu-item @click="openProfileModal('profile')">
+                    <SettingOutlined />
+                    个人设置
+                  </a-menu-item>
+                  <a-menu-item @click="openProfileModal('password')">
+                    <KeyOutlined />
+                    修改密码
+                  </a-menu-item>
+                  <a-menu-divider />
                   <a-menu-item @click="doLogout">
                     <LogoutOutlined />
                     退出登录
@@ -53,16 +62,31 @@
         </div>
       </a-col>
     </a-row>
+    <!-- 个人设置 / 修改密码 弹窗 -->
+    <UserProfileModal ref="userProfileModalRef" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { h, ref, computed } from 'vue'
-import { HomeOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons-vue'
+import {
+  HomeOutlined,
+  LogoutOutlined,
+  UserOutlined,
+  SettingOutlined,
+  KeyOutlined,
+} from '@ant-design/icons-vue'
 import { type MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/userController.ts'
+import UserProfileModal from '@/components/UserProfileModal.vue'
+
+const userProfileModalRef = ref<InstanceType<typeof UserProfileModal>>()
+
+const openProfileModal = (tab: 'profile' | 'password') => {
+  userProfileModalRef.value?.openModal(tab)
+}
 const displayUserName = computed(() => {
   const name = loginUserStore.loginUser.userName ?? '无名'
   return name.length > 15 ? name.slice(0, 15) + '...' : name
@@ -152,15 +176,54 @@ const doLogout = async () => {
 #globalHeader .title-bar {
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .title {
-  color: black;
+  color: rgba(255, 255, 255, 0.92);
   font-size: 18px;
+  font-weight: 600;
   margin-left: 16px;
+  letter-spacing: 0.5px;
 }
 
 .logo {
-  height: 48px;
+  height: 42px;
+}
+
+#globalHeader :deep(.ant-menu) {
+  background: transparent !important;
+  border-bottom: none !important;
+  font-size: 15px;
+}
+
+#globalHeader :deep(.ant-menu-item) {
+  color: rgba(255, 255, 255, 0.72) !important;
+  transition: all 0.2s ease;
+}
+
+#globalHeader :deep(.ant-menu-item:hover) {
+  color: #93c5fd !important;
+}
+
+#globalHeader :deep(.ant-menu-item-selected) {
+  color: #ffffff !important;
+  font-weight: 500;
+}
+
+#globalHeader :deep(.ant-menu-item-selected .anticon) {
+  color: #60a5fa !important;
+}
+
+.user-login-status {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.user-login-status :deep(.ant-space) {
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.85);
 }
 </style>

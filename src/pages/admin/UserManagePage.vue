@@ -8,6 +8,9 @@
       <a-form-item label="用户名">
         <a-input v-model:value="searchParams.userName" placeholder="输入用户名" allow-clear />
       </a-form-item>
+      <a-form-item label="邮箱">
+        <a-input v-model:value="searchParams.email" placeholder="输入邮箱" allow-clear />
+      </a-form-item>
       <a-form-item>
         <a-button type="primary" html-type="submit">搜索</a-button>
       </a-form-item>
@@ -29,6 +32,10 @@
             <span>{{ getDisplayName(record.userName) }}</span>
           </a-tooltip>
         </template>
+        <template v-else-if="column.dataIndex === 'email'">
+          <span v-if="record.email">{{ record.email }}</span>
+          <span v-else style="color: #bbb">未绑定</span>
+        </template>
         <template v-else-if="column.dataIndex === 'userRole'">
           <div v-if="record.userRole === 'admin'">
             <a-tag color="red">管理员</a-tag>
@@ -42,7 +49,24 @@
         </template>
 
         <template v-else-if="column.key === 'action'">
-          <a-button danger @click="doDelete(record.id)">删除</a-button>
+          <a-space wrap>
+            <a-popconfirm
+              title="确定将该用户的密码重置为默认密码（12345678）吗？"
+              ok-text="确定"
+              cancel-text="取消"
+              @confirm="doResetPassword(record.id)"
+            >
+              <a-button type="link">重置密码</a-button>
+            </a-popconfirm>
+            <a-popconfirm
+              title="确定要删除该用户吗？"
+              ok-text="确定"
+              cancel-text="取消"
+              @confirm="doDelete(record.id)"
+            >
+              <a-button danger type="link">删除</a-button>
+            </a-popconfirm>
+          </a-space>
         </template>
       </template>
     </a-table>
@@ -50,7 +74,11 @@
 </template>
 <script lang="ts" setup>
 import { computed, onMounted, reactive, ref } from 'vue'
-import { deleteUserUsingPost, listUserVoByPageUsingPost } from '@/api/userController.ts'
+import {
+  deleteUserUsingPost,
+  listUserVoByPageUsingPost,
+  resetUserPasswordUsingPost,
+} from '@/api/userController.ts'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
 const columns = [
@@ -65,6 +93,10 @@ const columns = [
   {
     title: '用户名',
     dataIndex: 'userName',
+  },
+  {
+    title: '邮箱',
+    dataIndex: 'email',
   },
   {
     title: '头像',
@@ -141,6 +173,16 @@ const doDelete = async (id: string) => {
     fetchData()
   } else {
     message.error('删除失败' + res.data.message)
+  }
+}
+
+const doResetPassword = async (id: any) => {
+  if (!id) return
+  const res = await resetUserPasswordUsingPost({ id })
+  if (res.data.code === 0) {
+    message.success('重置密码成功，默认密码为：12345678')
+  } else {
+    message.error('重置密码失败，' + res.data.message)
   }
 }
 //页面加载时获取数据

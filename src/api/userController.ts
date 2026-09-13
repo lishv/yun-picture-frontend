@@ -149,3 +149,113 @@ export async function updateUserUsingPost(
     ...(options || {}),
   })
 }
+
+/** 用户修改密码 POST /api/user/change/password */
+export async function changePasswordUsingPost(
+  body: API.UserChangePasswordRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/change/password', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 用户修改个人资料/头像 POST /api/user/edit */
+export async function editUserUsingPost(
+  body: API.UserEditRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/edit', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 管理员重置用户密码 POST /api/user/reset/password */
+export async function resetUserPasswordUsingPost(
+  body: API.UserResetPasswordRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/reset/password', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 发送邮箱验证码 POST /api/user/code/send */
+export async function sendEmailCodeUsingPost(
+  body: API.UserSendEmailCodeRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/code/send', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 邮箱验证码注册 POST /api/user/register/email */
+export async function emailRegisterUsingPost(
+  body: API.UserEmailRegisterRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseLong_>('/api/user/register/email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 邮箱验证码重置密码 POST /api/user/reset/password/email */
+export async function emailResetPasswordUsingPost(
+  body: API.UserEmailResetPasswordRequest,
+  options?: { [key: string]: any },
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/reset/password/email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** 用户上传专属头像 POST /api/user/upload/avatar */
+export async function uploadUserAvatarUsingPost(
+  file: File,
+  options?: { [key: string]: any },
+) {
+  const formData = new FormData()
+  if (file) {
+    formData.append('file', file)
+  }
+  return request<API.BaseResponseString_>('/api/user/upload/avatar', {
+    method: 'POST',
+    data: formData,
+    requestType: 'form',
+    ...(options || {}),
+  })
+}
+
+
+

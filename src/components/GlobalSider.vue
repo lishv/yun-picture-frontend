@@ -1,23 +1,38 @@
 <template>
-  <div id="globalSider">
-    <a-layout-sider
-      v-if="loginUserStore.loginUser.id"
-      width="200"
-      breakpoint="lg"
-      collapsed-width="0"
-    >
-      <a-menu
-        v-model:selectedKeys="current"
-        mode="inline"
-        :items="menuItems"
-        @click="doMenuClick"
-      />
-    </a-layout-sider>
-  </div>
+  <a-layout-sider
+    v-if="loginUserStore.loginUser.id"
+    id="globalSider"
+    v-model:collapsed="collapsed"
+    collapsible
+    :width="200"
+    :collapsed-width="64"
+    breakpoint="lg"
+    class="sider"
+  >
+    <a-menu
+      v-model:selectedKeys="current"
+      mode="inline"
+      :items="menuItems"
+      @click="doMenuClick"
+    />
+    <template #trigger>
+      <div class="collapse-trigger-bar">
+        <component :is="collapsed ? MenuUnfoldOutlined : MenuFoldOutlined" class="trigger-icon" />
+        <span v-if="!collapsed" class="trigger-text">收起侧栏</span>
+      </div>
+    </template>
+  </a-layout-sider>
 </template>
 <script lang="ts" setup>
 import { computed, h, ref, watchEffect } from 'vue'
-import { PictureOutlined, TeamOutlined, UserOutlined } from '@ant-design/icons-vue'
+import {
+  FolderOutlined,
+  MenuFoldOutlined,
+  MenuUnfoldOutlined,
+  PictureOutlined,
+  TeamOutlined,
+  UserOutlined,
+} from '@ant-design/icons-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import { SPACE_TYPE_ENUM } from '@/constants/space.ts'
@@ -25,6 +40,9 @@ import { listMyTeamSpaceUsingPost } from '@/api/spaceUserController.ts'
 import { message } from 'ant-design-vue'
 
 const loginUserStore = useLoginUserStore()
+
+// 侧边栏折叠状态
+const collapsed = ref(false)
 
 // 固定的菜单列表
 const fixedMenuItems = [
@@ -58,6 +76,7 @@ const menuItems = computed(() => {
     return {
       key: '/space/' + spaceUser.spaceId,
       label: space?.spaceName,
+      icon: () => h(FolderOutlined),
     }
   })
   const teamSpaceMenuGroup = {
@@ -91,9 +110,9 @@ watchEffect(() => {
 
 const router = useRouter()
 // 当前要高亮的菜单项
-const current = ref<string[]>([])
+const current = ref<string[]>([router.currentRoute.value.path])
 // 监听路由变化，更新高亮菜单项
-router.afterEach((to, from, next) => {
+router.afterEach((to) => {
   current.value = [to.path]
 })
 
@@ -104,7 +123,121 @@ const doMenuClick = ({ key }) => {
 </script>
 
 <style scoped>
-#globalSider .ant-layout-sider {
-  background: none;
+#globalSider {
+  position: sticky;
+  top: 64px;
+  height: calc(100vh - 64px);
+  align-self: flex-start;
+  z-index: 90;
+  background: linear-gradient(180deg, #242632 0%, #1b1d25 50%, #15161d 100%);
+  border-right: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.25);
+  transition: width 0.25s ease, min-width 0.25s ease, max-width 0.25s ease;
+}
+
+#globalSider :deep(.ant-layout-sider-children) {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 44px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* 优雅暗色微滚动条 */
+#globalSider :deep(.ant-layout-sider-children)::-webkit-scrollbar {
+  width: 4px;
+}
+
+#globalSider :deep(.ant-layout-sider-children)::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: 2px;
+}
+
+#globalSider :deep(.ant-layout-sider-children)::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+#globalSider :deep(.ant-menu) {
+  background: transparent !important;
+  border-inline-end: none !important;
+  padding: 8px 6px 0;
+}
+
+#globalSider :deep(.ant-menu-item) {
+  border-radius: 8px;
+  margin-bottom: 4px;
+  color: rgba(255, 255, 255, 0.78);
+  transition: all 0.2s ease;
+}
+
+#globalSider :deep(.ant-menu-item:hover) {
+  color: #93c5fd !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+
+#globalSider :deep(.ant-menu-item-selected) {
+  background: rgba(59, 130, 246, 0.16) !important;
+  border: 1px solid rgba(59, 130, 246, 0.3) !important;
+  color: #93c5fd !important;
+  font-weight: 500;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.2);
+}
+
+#globalSider :deep(.ant-menu-item-selected .anticon) {
+  color: #60a5fa !important;
+}
+
+/* 分组标题（如“我的团队”）清晰优雅 */
+#globalSider :deep(.ant-menu-item-group-title) {
+  color: rgba(255, 255, 255, 0.52) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.5px;
+  padding-left: 14px;
+}
+
+#globalSider :deep(.ant-layout-sider-trigger) {
+  position: absolute !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  width: 100% !important;
+  background: linear-gradient(180deg, #21232d 0%, #181920 100%) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.07) !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  height: 44px !important;
+  line-height: 44px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.25s ease !important;
+  cursor: pointer;
+  z-index: 10;
+}
+
+#globalSider :deep(.ant-layout-sider-trigger:hover) {
+  background: #2a2c38 !important;
+  color: #60a5fa !important;
+}
+
+.collapse-trigger-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  font-size: 14px;
+}
+
+.trigger-icon {
+  font-size: 15px;
+  transition: transform 0.2s ease;
+}
+
+.trigger-text {
+  font-size: 13px;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 </style>

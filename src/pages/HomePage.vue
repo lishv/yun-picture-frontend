@@ -1,36 +1,62 @@
 <template>
   <div id="homePage">
-    <!-- 搜索框 -->
-    <div class="search-bar">
-      <a-input-search
-        v-model:value="searchParams.searchText"
-        placeholder="从海量图片中搜索"
-        enter-button="搜索"
-        size="large"
-        @search="doSearch"
-      />
+    <!-- 顶部视觉横幅与强化搜索区（彻底解决页面空旷、单调、搜索框过窄问题） -->
+    <div class="search-hero-section">
+      <div class="hero-title-wrap">
+        <h1 class="hero-title">海量高清图片 · 绘聚创作灵感</h1>
+        <p class="hero-subtitle">创意素材多维检索 · 空间多人实时协同</p>
+      </div>
+
+      <!-- 搜索框：按照用户红框要求拓展到全宽，按钮消除生硬蓝块 -->
+      <div class="search-bar">
+        <a-input-search
+          v-model:value="searchParams.searchText"
+          placeholder="搜索高清壁纸、摄影大图、设计插画、表情包、免抠素材..."
+          enter-button="搜 索"
+          size="large"
+          @search="doSearch"
+        />
+      </div>
+
+      <!-- 热门关键词快捷检索，丰富空旷区域 -->
+      <div class="quick-keywords">
+        <span class="quick-title">热门搜索：</span>
+        <span
+          v-for="kw in hotKeywords"
+          :key="kw"
+          class="quick-kw-item"
+          @click="quickSearch(kw)"
+        >
+          {{ kw }}
+        </span>
+      </div>
     </div>
 
-    <!-- 分类和标签筛选 -->
-    <a-tabs v-model:active-key="selectedCategory" class="category-tabs" @change="doSearch">
-      <a-tab-pane key="all" tab="全部" />
-      <a-tab-pane v-for="category in categoryList" :key="category" :tab="category" />
-    </a-tabs>
+    <!-- 筛选面板区：将原本散落的分类与标签整合进现代暗色卡片，界面层次更丰富不单调 -->
+    <div class="filter-panel">
+      <!-- 分类和标签筛选 -->
+      <a-tabs v-model:active-key="selectedCategory" class="category-tabs" @change="doSearch">
+        <a-tab-pane key="all" tab="全部" />
+        <a-tab-pane v-for="category in categoryList" :key="category" :tab="category" />
+      </a-tabs>
 
-    <div class="tag-bar">
-      <span class="tag-label">标签：</span>
+      <div class="tag-bar">
+        <span class="tag-label">
+          <TagsOutlined class="tag-icon" />标签：
+        </span>
 
-      <a-space :size="[4, 10]" wrap>
-        <a-checkable-tag
-          v-for="(tag, index) in tagList"
-          :key="tag"
-          v-model:checked="selectedTagList[index]"
-          class="filter-tag"
-          @change="doSearch"
-        >
-          {{ tag }}
-        </a-checkable-tag>
-      </a-space>
+        <a-space :size="[6, 10]" wrap>
+          <a-checkable-tag
+            v-for="(tag, index) in tagList"
+            :key="tag"
+            v-model:checked="selectedTagList[index]"
+            class="filter-tag"
+            @change="doSearch"
+          >
+            {{ tag }}
+          </a-checkable-tag>
+        </a-space>
+      </div>
     </div>
 
     <!-- 图片列表 -->
@@ -50,6 +76,7 @@
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { message } from 'ant-design-vue'
+import { TagsOutlined } from '@ant-design/icons-vue'
 import { useRoute, useRouter } from 'vue-router'
 import {
   listPictureTagCategoryUsingGet,
@@ -59,6 +86,13 @@ import PictureList from '@/components/PictureList.vue'
 
 const route = useRoute()
 const router = useRouter()
+
+// 热门搜索推荐词
+const hotKeywords = ['壁纸', '摄影', '插画', '高清', '艺术', '风景', '设计', '头像']
+const quickSearch = (kw: string) => {
+  searchParams.searchText = kw
+  doSearch()
+}
 
 const dataList = ref<API.PictureVO[]>([])
 const loading = ref(false)
@@ -286,31 +320,220 @@ onBeforeUnmount(() => {
   margin-bottom: 16px;
 }
 
-#homePage .search-bar {
-  max-width: 550px;
-  margin: 0 auto 16px;
+/* 顶部视觉横幅区（彻底解决空旷单调感，提升品牌质感） */
+.search-hero-section {
+  position: relative;
+  text-align: center;
+  padding: 38px 24px 30px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  background: radial-gradient(
+      ellipse at 50% 20%,
+      rgba(59, 130, 246, 0.14) 0%,
+      transparent 65%
+    ),
+    linear-gradient(180deg, rgba(38, 42, 54, 0.65) 0%, rgba(22, 24, 32, 0.65) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
 }
 
-#homePage .tag-bar {
-  margin-bottom: 16px;
+.hero-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 1.2px;
+  margin-bottom: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.82) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-/* 放大分类文字 */
-#homePage .category-tabs :deep(.ant-tabs-tab-btn) {
-  font-size: 18px;
+.hero-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.52);
+  margin-bottom: 22px;
+  letter-spacing: 0.5px;
 }
 
-/* 放大“标签：”文字 */
-#homePage .tag-label {
-  margin-right: 8px;
-  font-size: 18px;
+/* 搜索框：按照用户红框要求拓展到全宽，并去除生硬纯蓝矩形块 */
+.search-bar {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
 }
 
-/* 放大每一个标签文字 */
-#homePage .filter-tag {
-  padding: 2px 8px;
+.search-bar :deep(.ant-input-search) {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+
+.search-bar :deep(.ant-input-group .ant-input) {
+  height: 50px;
+  font-size: 15px;
+  padding-left: 20px;
+  border-radius: 10px 0 0 10px !important;
+  background: rgba(22, 24, 32, 0.85) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-right: none !important;
+  color: #ffffff !important;
+  transition: all 0.25s ease;
+}
+
+.search-bar :deep(.ant-input-group .ant-input::placeholder) {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.search-bar :deep(.ant-input-group .ant-input:focus),
+.search-bar :deep(.ant-input-group .ant-input:hover) {
+  border-color: #3b82f6 !important;
+}
+
+/* 搜索按钮：由生硬刺眼的纯色平铺矩形改为优雅微光渐变 */
+.search-bar :deep(.ant-input-search-button) {
+  height: 50px !important;
+  padding: 0 32px !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  letter-spacing: 1px !important;
+  border-radius: 0 10px 10px 0 !important;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3) !important;
+  transition: all 0.25s ease !important;
+}
+
+.search-bar :deep(.ant-input-search-button:hover) {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+  border-color: rgba(255, 255, 255, 0.38) !important;
+  box-shadow: 0 4px 18px rgba(37, 99, 235, 0.5) !important;
+}
+
+/* 热门搜索推荐 */
+.quick-keywords {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.quick-title {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.quick-kw-item {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 3px 12px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.quick-kw-item:hover {
+  color: #93c5fd;
+  background: rgba(37, 99, 235, 0.22);
+  border-color: rgba(59, 130, 246, 0.45);
+  transform: translateY(-1px);
+}
+
+/* 整合后的筛选控制台（避免零散空旷，渐变黑质感） */
+.filter-panel {
+  background: linear-gradient(180deg, rgba(38, 41, 53, 0.7) 0%, rgba(25, 27, 35, 0.7) 100%);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 18px 24px 22px;
+  margin-bottom: 24px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.category-tabs {
+  margin-bottom: 12px;
+}
+
+.category-tabs :deep(.ant-tabs-nav) {
+  margin-bottom: 12px;
+}
+
+.category-tabs :deep(.ant-tabs-tab) {
+  padding: 8px 16px;
   font-size: 16px;
-  line-height: 24px;
+  color: rgba(255, 255, 255, 0.65);
+  transition: all 0.2s ease;
+}
+
+.category-tabs :deep(.ant-tabs-tab:hover) {
+  color: #93c5fd;
+}
+
+.category-tabs :deep(.ant-tabs-tab-active .ant-tabs-tab-btn) {
+  color: #ffffff !important;
+  font-weight: 600;
+}
+
+.category-tabs :deep(.ant-tabs-ink-bar) {
+  background: linear-gradient(90deg, #3b82f6, #60a5fa) !important;
+  height: 3px !important;
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.6);
+}
+
+.tag-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.tag-label {
+  margin-right: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.88);
+  display: inline-flex;
+  align-items: center;
+}
+
+.tag-icon {
+  margin-right: 4px;
+  color: #60a5fa;
+}
+
+/* 优化标签边框与对比度，清晰醒目 */
+.filter-tag {
+  padding: 4px 12px;
+  font-size: 14px;
+  line-height: 20px;
+  border-radius: 6px;
+  border: 1px solid #3c3c4c !important;
+  background: #22222b !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.filter-tag:hover {
+  border-color: #60a5fa !important;
+  color: #93c5fd !important;
+  background: #2a2a38 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+#homePage :deep(.ant-tag-checkable-checked) {
+  background-color: rgba(37, 99, 235, 0.22) !important;
+  border-color: #3b82f6 !important;
+  color: #93c5fd !important;
+  font-weight: 500;
+  box-shadow: 0 0 8px rgba(37, 99, 235, 0.35);
 }
 
 .load-more-trigger {
@@ -321,7 +544,7 @@ onBeforeUnmount(() => {
 }
 
 .load-status {
-  color: #8c8c8c;
+  color: rgba(255, 255, 255, 0.45);
   font-size: 14px;
 }
 </style>

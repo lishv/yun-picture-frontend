@@ -4,7 +4,7 @@ import { getLoginUserUsingGet } from '@/api/userController.ts'
 //定义一个状态存储用户登录用户信息的状态
 export const useLoginUserStore = defineStore('counter', () => {
   // 定义一个响应式数据 loginUser，初始值为 未登录,响应式数据即动态响应数据
-  const loginUser: Ref<any, any> = ref<API.LoginUserVo>({
+  const loginUser: Ref<any, any> = ref<API.LoginUserVO>({
     userName: '未登录',
   })
   /**

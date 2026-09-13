@@ -243,6 +243,7 @@ declare namespace API {
   type LoginUserVO = {
     createTime?: string
     editTime?: string
+    email?: string
     id?: number
     updateTime?: string
     userAccount?: string
@@ -657,6 +658,7 @@ declare namespace API {
   type User = {
     createTime?: string
     editTime?: string
+    email?: string
     id?: number
     isDelete?: number
     updateTime?: string
@@ -672,6 +674,7 @@ declare namespace API {
   }
 
   type UserAddRequest = {
+    email?: string
     userAccount?: string
     userAvatar?: string
     userName?: string
@@ -686,6 +689,7 @@ declare namespace API {
 
   type UserQueryRequest = {
     current?: number
+    email?: string
     id?: number
     pageSize?: number
     sortField?: string
@@ -722,6 +726,7 @@ declare namespace API {
   }
 
   type UserUpdateRequest = {
+    email?: string
     id?: number
     userAvatar?: string
     userName?: string
@@ -731,6 +736,7 @@ declare namespace API {
 
   type UserVO = {
     createTime?: string
+    email?: string
     id?: number
     userAccount?: string
     userAvatar?: string
@@ -744,5 +750,41 @@ declare namespace API {
 
   type VipExchangeRequest = {
     vipCode?: string
+  }
+
+  type UserChangePasswordRequest = {
+    oldPassword?: string
+    newPassword?: string
+    checkPassword?: string
+  }
+
+  type UserEditRequest = {
+    userName?: string
+    userAvatar?: string
+    userProfile?: string
+  }
+
+  type UserResetPasswordRequest = {
+    id?: number | string
+  }
+
+  type UserSendEmailCodeRequest = {
+    email?: string
+    biz?: 'register' | 'reset_password' | string
+  }
+
+  type UserEmailRegisterRequest = {
+    userAccount?: string
+    email?: string
+    code?: string
+    userPassword?: string
+    checkPassword?: string
+  }
+
+  type UserEmailResetPasswordRequest = {
+    email?: string
+    code?: string
+    newPassword?: string
+    checkPassword?: string
   }
 }
