@@ -2,15 +2,15 @@ import axios from 'axios'
 import { message } from 'ant-design-vue'
 
 // 区分开发和生产环境
+// 本地开发直接打到 localhost:8123，生产环境留空走同源相对路径（由 Nginx 统一反向代理 /api）
 const DEV_BASE_URL = 'http://localhost:8123'
-//const DEV_BASE_URL = ''
-// const PROD_BASE_URL = "http://81.69.229.63";
+const PROD_BASE_URL = ''
 
 // 创建 Axios 实例
 const myAxios = axios.create({
-  baseURL: DEV_BASE_URL,
+  baseURL: import.meta.env.DEV ? DEV_BASE_URL : PROD_BASE_URL,
   timeout: 10000,
-  withCredentials: true,// 跨域请求时是否需要使用凭证-token
+  withCredentials: true, // 跨域请求时是否需要使用凭证-token
 })
 //直接复制得到的代码
 // 全局请求拦截器
@@ -30,14 +30,15 @@ myAxios.interceptors.response.use(
   function (response) {
     const { data } = response
     // 未登录
-    if (data.code === 40100) {
+    if (data && data.code === 40100) {
+      const requestUrl = response.request?.responseURL || response.config?.url || ''
       // 不是获取用户信息的请求，并且用户目前不是已经在用户登录页面，则跳转到登录页面
       if (
-        !response.request.responseURL.includes('user/get/login') &&
+        !requestUrl.includes('user/get/login') &&
         !window.location.pathname.includes('/user/login')
       ) {
         message.warning('请先登录')
-        window.location.href = `/user/login?redirect=${window.location.href}`
+        window.location.href = `/user/login?redirect=${encodeURIComponent(window.location.href)}`
       }
     }
     return response

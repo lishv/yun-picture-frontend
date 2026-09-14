@@ -32,6 +32,7 @@
         :spaceId="spaceId"
         :space="space"
         :onSuccess="onCropSuccess"
+        :onPictureUpdated="getOldPicture"
       />
       <ImageOutPainting
         ref="imageOutPaintingRef"

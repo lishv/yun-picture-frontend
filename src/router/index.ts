@@ -54,11 +54,6 @@ const router = createRouter({
       component: PictureManagePage,
     },
     {
-      path: '/admin/pictureManage',
-      name: '图片管理',
-      component: PictureManagePage,
-    },
-    {
       path: '/add_picture',
       name: '添加图片',
       component: AddPicturePage,
@@ -110,6 +105,10 @@ const router = createRouter({
       name: '空间成员管理',
       component: SpaceUserManagePage,
       props: true,
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/',
     },
   ],
 })

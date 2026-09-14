@@ -44,7 +44,7 @@
           <a-progress
             type="circle"
             :size="42"
-            :percent="((space.totalSize * 100) / space.maxSize).toFixed(1)"
+            :percent="space.maxSize ? Number(((space.totalSize * 100) / space.maxSize).toFixed(1)) : 0"
           />
         </a-tooltip>
       </a-space>

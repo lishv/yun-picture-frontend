@@ -14,18 +14,22 @@ let firstFetchLoginUser = true
 router.beforeEach(async (to, from, next) => {
   const loginUserStore = useLoginUserStore()
   let loginUser = loginUserStore.loginUser
-  //确保页面首次加载时,能等待后端返回用户信息后再次校验
+  // 确保页面首次加载时,能等待后端返回用户信息后再次校验
   if (firstFetchLoginUser) {
-    await loginUserStore.fetchLoginUser()
+    try {
+      await loginUserStore.fetchLoginUser()
+    } catch (e) {
+      console.error('获取登录用户信息失败:', e)
+    }
     loginUser = loginUserStore.loginUser
     firstFetchLoginUser = false
   }
-  //自定义校验规则,如进管理员可以访问/admin开头页面
-  const toUrl = to.fullPath //获取当前页面路由的路径
+  // 自定义校验规则,如进入管理员可以访问/admin开头页面
+  const toUrl = to.fullPath // 获取当前页面路由的路径
   if (toUrl.startsWith('/admin')) {
     if (!loginUser || loginUser.userRole !== 'admin') {
       message.error('您没有权限访问该页面')
-      next({ path: `/user/login?redirect=${to.fullPath}` })
+      next({ path: `/user/login?redirect=${encodeURIComponent(to.fullPath)}` })
       return
     }
   }

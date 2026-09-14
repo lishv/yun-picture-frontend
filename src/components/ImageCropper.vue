@@ -72,6 +72,7 @@ interface Props {
   spaceId?: number
   space?: API.SpaceVO
   onSuccess?: (newPicture: API.PictureVO) => void
+  onPictureUpdated?: () => void
 }
 
 const props = defineProps<Props>()
@@ -512,12 +513,28 @@ const initWebsocket = () => {
 
     editingUser.value = undefined
     pendingEditActions.length = 0
-    imageLoaded.value = false
 
     await nextTick()
 
     // 清除未保存的临时编辑状态
     cropperRef.value?.refresh()
+  })
+
+  /**
+   * 协作者完成图片编辑并保存
+   */
+  websocket.on(PICTURE_EDIT_MESSAGE_TYPE_ENUM.COMPLETE_EDIT, (msg) => {
+    console.log('收到完成编辑状态的消息：', msg)
+
+    if (msg?.message) {
+      message.success(msg.message)
+    }
+
+    // 关闭协同编辑弹窗，避免留在弹窗内加载已删除的旧图变成透明空白网格
+    closeModal()
+
+    // 通知父组件重新获取最新图片
+    props.onPictureUpdated?.()
   })
 
   // 所有事件注册完成后再连接

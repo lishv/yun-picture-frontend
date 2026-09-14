@@ -43,6 +43,23 @@
             </div>
           </a-form-item>
 
+          <a-form-item label="用户 ID">
+            <a-input
+              :value="loginUserStore.loginUser.id ? String(loginUserStore.loginUser.id) : ''"
+              readonly
+              placeholder="暂无用户 ID"
+            >
+              <template #addonAfter>
+                <a-tooltip title="点击复制用户 ID">
+                  <span class="copy-btn" @click="copyUserId">
+                    <CopyOutlined />
+                    <span>复制</span>
+                  </span>
+                </a-tooltip>
+              </template>
+            </a-input>
+          </a-form-item>
+
           <a-form-item label="用户账号">
             <a-input :value="loginUserStore.loginUser.userAccount" disabled />
           </a-form-item>
@@ -128,7 +145,7 @@
 import { reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
 import type { UploadProps } from 'ant-design-vue'
-import { UploadOutlined } from '@ant-design/icons-vue'
+import { CopyOutlined, UploadOutlined } from '@ant-design/icons-vue'
 import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import {
   changePasswordUsingPost,
@@ -139,6 +156,36 @@ import {
 const loginUserStore = useLoginUserStore()
 const visible = ref(false)
 const activeKey = ref('profile')
+
+// 复制用户 ID
+const copyUserId = async () => {
+  const userId = loginUserStore.loginUser.id
+  if (!userId) {
+    message.warning('未获取到用户 ID')
+    return
+  }
+  const text = String(userId)
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text)
+    } else {
+      // 兼容非 HTTPS 环境（如通过 IP 访问）
+      const textArea = document.createElement('textarea')
+      textArea.value = text
+      textArea.style.position = 'fixed'
+      textArea.style.opacity = '0'
+      textArea.style.left = '-9999px'
+      document.body.appendChild(textArea)
+      textArea.focus()
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+    }
+    message.success('用户 ID 已复制到剪贴板')
+  } catch (err) {
+    message.error('复制失败，请手动选中文本复制')
+  }
+}
 
 // 个人资料表单
 const profileForm = reactive<API.UserEditRequest>({
@@ -304,5 +351,20 @@ const handleChangePassword = async () => {
 .tip-text {
   font-size: 12px;
   color: #8c8c8c;
+}
+
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  color: #1890ff;
+  user-select: none;
+  font-size: 13px;
+  transition: color 0.2s;
+}
+
+.copy-btn:hover {
+  color: #40a9ff;
 }
 </style>

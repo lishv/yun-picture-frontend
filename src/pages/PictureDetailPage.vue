@@ -167,7 +167,7 @@ const doDelete = async () => {
 
 // 下载图片
 const doDownload = () => {
-  downloadImage(picture.value.url)
+  downloadImage(picture.value.url, picture.value.name)
 }
 
 // ----- 分享操作 ----

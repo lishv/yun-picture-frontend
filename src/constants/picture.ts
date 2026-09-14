@@ -37,6 +37,7 @@ export const PICTURE_EDIT_MESSAGE_TYPE_ENUM = {
   ENTER_EDIT: 'ENTER_EDIT',
   EXIT_EDIT: 'EXIT_EDIT',
   EDIT_ACTION: 'EDIT_ACTION',
+  COMPLETE_EDIT: 'COMPLETE_EDIT',
 }
 
 /**
@@ -49,6 +50,7 @@ export const PICTURE_EDIT_MESSAGE_TYPE_MAP = {
   ENTER_EDIT: '进入编辑状态',
   EXIT_EDIT: '退出编辑状态',
   EDIT_ACTION: '执行编辑操作',
+  COMPLETE_EDIT: '完成编辑并保存',
 }
 
 /**

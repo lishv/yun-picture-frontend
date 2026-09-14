@@ -18,21 +18,17 @@ export const useLoginUserStore = defineStore('counter', () => {
    * 获取登录用户get
    */
   async function fetchLoginUser() {
-    const res = await getLoginUserUsingGet()
-    if (res.data.code === 0 && res.data.data) {
-      loginUser.value = res.data.data
+    try {
+      const res = await getLoginUserUsingGet()
+      if (res.data.code === 0 && res.data.data) {
+        loginUser.value = res.data.data
+      } else {
+        loginUser.value = { userName: '未登录' }
+      }
+    } catch {
+      // 容错处理：未登录或请求异常时兜底为未登录，避免将异常抛出中断路由守卫导致黑屏
+      loginUser.value = { userName: '未登录' }
     }
-
-
-    // const res=await getCurrentUser();
-    // if(res.data.code===0&&res.data.data){
-    //   loginUser.value=res.data.data
-    // }
-    // setTimeout(() => {
-    //   loginUser.value={
-    //     userName:'测试用户',
-    //     id: 1 }},
-    //   3000)
   }
 
   // 返回响应式数据 count、计算属性 doubleCount、方法 increment

@@ -110,14 +110,18 @@ watchEffect(() => {
 
 const router = useRouter()
 // 当前要高亮的菜单项
-const current = ref<string[]>([router.currentRoute.value.path])
+const current = ref<string[]>([router.currentRoute.value.fullPath, router.currentRoute.value.path])
 // 监听路由变化，更新高亮菜单项
 router.afterEach((to) => {
-  current.value = [to.path]
+  current.value = [to.fullPath, to.path]
 })
 
 // 路由跳转事件
-const doMenuClick = ({ key }) => {
+const doMenuClick = ({ key }: { key: string }) => {
+  // 忽略非路由路径（如分组标题 teamSpace）
+  if (!key || !key.startsWith('/')) {
+    return
+  }
   router.push(key)
 }
 </script>

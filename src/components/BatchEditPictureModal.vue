@@ -45,7 +45,7 @@ import { message } from 'ant-design-vue'
 
 interface Props {
   pictureList: API.PictureVO[]
-  spaceId: number
+  spaceId: number | string
   onSuccess: () => void
 }
 
