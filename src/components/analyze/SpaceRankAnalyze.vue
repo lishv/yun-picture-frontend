@@ -16,7 +16,7 @@ import { message } from 'ant-design-vue'
 interface Props {
   queryAll?: boolean
   queryPublic?: boolean
-  spaceId?: number
+  spaceId?: number | string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -34,9 +34,6 @@ const fetchData = async () => {
   loading.value = true
   // 转换搜索参数
   const res = await getSpaceRankAnalyzeUsingPost({
-    queryAll: props.queryAll,
-    queryPublic: props.queryPublic,
-    spaceId: props.spaceId,
     topN: 10, // 后端默认是 10
   })
   if (res.data.code === 0 && res.data.data) {
@@ -56,8 +53,8 @@ watchEffect(() => {
 
 // 图表选项
 const options = computed(() => {
-  const spaceNames = dataList.value.map((item) => item.spaceName)
-  const usageData = dataList.value.map((item) => (item.totalSize / (1024 * 1024)).toFixed(2)) // 转为 MB
+  const spaceNames = dataList.value.map((item) => item.spaceName ?? '')
+  const usageData = dataList.value.map((item) => (((item.totalSize ?? 0) / (1024 * 1024)).toFixed(2))) // 转为 MB
 
   return {
     tooltip: { trigger: 'axis' },

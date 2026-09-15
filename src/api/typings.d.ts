@@ -487,7 +487,7 @@ declare namespace API {
   type SpaceCategoryAnalyzeRequest = {
     queryAll?: boolean
     queryPublic?: boolean
-    spaceId?: number
+    spaceId?: number | string
   }
 
   type SpaceCategoryAnalyzeResponse = {
@@ -527,7 +527,7 @@ declare namespace API {
   type SpaceSizeAnalyzeRequest = {
     queryAll?: boolean
     queryPublic?: boolean
-    spaceId?: number
+    spaceId?: number | string
   }
 
   type SpaceSizeAnalyzeResponse = {
@@ -538,7 +538,7 @@ declare namespace API {
   type SpaceTagAnalyzeRequest = {
     queryAll?: boolean
     queryPublic?: boolean
-    spaceId?: number
+    spaceId?: number | string
   }
 
   type SpaceTagAnalyzeResponse = {
@@ -557,7 +557,7 @@ declare namespace API {
   type SpaceUsageAnalyzeRequest = {
     queryAll?: boolean
     queryPublic?: boolean
-    spaceId?: number
+    spaceId?: number | string
   }
 
   type SpaceUsageAnalyzeResponse = {
@@ -587,9 +587,9 @@ declare namespace API {
   type SpaceUserAnalyzeRequest = {
     queryAll?: boolean
     queryPublic?: boolean
-    spaceId?: number
+    spaceId?: number | string
     timeDimension?: string
-    userId?: number
+    userId?: number | string
   }
 
   type SpaceUserAnalyzeResponse = {

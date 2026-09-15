@@ -30,9 +30,9 @@
       <a-col :xs="24" :md="12">
         <SpaceUserAnalyze :spaceId="spaceId" :queryAll="queryAll" :queryPublic="queryPublic" />
       </a-col>
-      <!-- 空间使用排行分析 -->
-      <a-col :xs="24" :md="12">
-        <SpaceRankAnalyze v-if="isAdmin" :spaceId="spaceId" :queryAll="queryAll" :queryPublic="queryPublic" />
+      <!-- 空间使用排行分析（仅管理员在全部空间分析时展示） -->
+      <a-col :xs="24" :md="12" v-if="isAdmin && queryAll">
+        <SpaceRankAnalyze :queryAll="queryAll" />
       </a-col>
     </a-row>
   </div>
