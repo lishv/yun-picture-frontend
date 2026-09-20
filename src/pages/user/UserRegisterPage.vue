@@ -1,6 +1,6 @@
 <template>
   <div id="userRegisterPage">
-    <h2 class="title">绘灵云图片协作平台</h2>
+    <h2 class="title">绘灵云图片助手</h2>
     <div class="desc">一个免费的图片协作平台,支持用户之间的图片分享和协作</div>
 
     <a-form

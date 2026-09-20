@@ -111,7 +111,7 @@ class HualingLogoAssetsTest(unittest.TestCase):
     def test_horizontal_logo_contains_brand_hierarchy(self):
         root = parse_svg(ASSETS["horizontal"])
         copy = ["".join(node.itertext()).strip() for node in root.findall(f".//{{{SVG_NS}}}text")]
-        self.assertEqual(copy, ["绘灵云", "图片协作平台"])
+        self.assertEqual(copy, ["绘灵云", "图片助手"])
 
     def test_favicon_uses_compact_canvas_without_text(self):
         root = parse_svg(ASSETS["favicon"])
@@ -128,7 +128,7 @@ class HualingLogoAssetsTest(unittest.TestCase):
         self.assertIn(svg_link, source)
         self.assertIn(ico_link, source)
         self.assertLess(source.index(svg_link), source.index(ico_link))
-        self.assertIn("<title>绘灵云图片协作平台</title>", source)
+        self.assertIn("<title>绘灵云图片助手</title>", source)
 
 
 if __name__ == "__main__":

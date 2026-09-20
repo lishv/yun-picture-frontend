@@ -5,7 +5,7 @@
         <router-link to="/">
           <div class="title-bar">
             <img class="logo" src="../assets/logo.svg" alt="logo" />
-            <div class="title">绘灵云图片协作平台</div>
+            <div class="title">绘灵云图片助手</div>
           </div>
         </router-link>
       </a-col>

@@ -13,7 +13,7 @@
       </a-layout>
 
       <a-layout-footer class="footer">
-        <a href="https://github.com/lishv" target="_blank">绘灵云图片协作平台 by xiaoli </a>
+        <a href="https://github.com/lishv" target="_blank">绘灵云图片助手 by xiaoli </a>
       </a-layout-footer>
     </a-layout>
   </div>
