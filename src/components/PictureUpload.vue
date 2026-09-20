@@ -22,7 +22,6 @@ import type { UploadProps } from 'ant-design-vue'
 import { message } from 'ant-design-vue'
 import { uploadPictureUsingPost } from '@/api/pictureController.ts'
 
-
 interface Props {
   picture?: API.PictureVO
   spaceId?: number
@@ -39,7 +38,7 @@ const handleUpload = async ({ file }: any) => {
   loading.value = true
   try {
     const params: API.PictureUploadRequest = props.picture ? { id: props.picture.id } : {}
-    params.spaceId = props.spaceId;
+    params.spaceId = props.spaceId
     const res = await uploadPictureUsingPost(params, {}, file)
     if (res.data.code === 0 && res.data.data) {
       message.success('图片上传成功')
@@ -62,8 +61,13 @@ const loading = ref<boolean>(false)
  * @param file
  */
 const beforeUpload = (file: UploadProps['fileList'][number]) => {
-  // 校验图片格式
-  const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png'
+  // 校验图片格式,"jpg","jpeg","png","gif","webp"
+  const isJpgOrPng =
+    file.type === 'image/jpeg' ||
+    file.type === 'image/jpg' ||
+    file.type === 'image/png' ||
+    file.type === 'image/gif' ||
+    file.type === 'image/webp'
   if (!isJpgOrPng) {
     message.error('不支持上传该格式的图片，推荐 jpg 或 png')
   }
